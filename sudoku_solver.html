@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sudoku Solver</title>
+    <style>
+      table {
+        border-collapse: collapse;
+      }
+      td {
+        width: 40px;
+        height: 40px;
+        text-align: center;
+        border: none;
+        cursor: pointer;
+      }
+      input {
+        width: 100%;
+        height: 100%;
+        border: 1px solid black;
+        outline: none;
+        font-size: 16px;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Sudoku Solver</h1>
+    <table id="sudoku-grid"></table>
+    <button onclick="solveAndCheck()">Solve & Check</button>
+    <button onclick="refreshPage()">Clear Board</button>
+
+    <script>
+      const sudoku = [
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      ];
+
+      function createGrid() {
+        const table = document.getElementById("sudoku-grid");
+        for (let i = 0; i < 9; i++) {
+          const row = table.insertRow();
+          for (let j = 0; j < 9; j++) {
+            const cell = row.insertCell();
+            const input = document.createElement("input");
+            input.type = "text";
+            input.maxLength = 1;
+            input.addEventListener("input", () => {
+              sudoku[i][j] = parseInt(input.value) || 0;
+            });
+            cell.appendChild(input);
+          }
+        }
+      }
+
+      function displayGrid() {
+        const table = document.getElementById("sudoku-grid");
+        for (let i = 0; i < 9; i++) {
+          for (let j = 0; j < 9; j++) {
+            const input = table.rows[i].cells[j].querySelector("input");
+            input.value = sudoku[i][j] === 0 ? "" : sudoku[i][j];
+          }
+        }
+      }
+
+      // initiate hashmaps
+      const row = Array.from({ length: 9 }, () => new Set());
+      const col = Array.from({ length: 9 }, () => new Set());
+      const grid = Array.from({ length: 3 }, () =>
+        Array.from({ length: 3 }, () => new Set())
+      );
+
+      function backtrack(r, c) {
+        if (r === sudoku.length) {
+          return true;
+        } else if (c === sudoku[0].length) {
+          return backtrack(r + 1, 0);
+        }
+
+        char = sudoku[r][c];
+
+        if (char !== 0) {
+          return backtrack(r, c + 1);
+        } else {
+          for (let char = 1; char <= 9; char++) {
+            if (
+              row[r].has(char) === true ||
+              col[c].has(char) === true ||
+              grid[Math.floor(r / 3)][Math.floor(c / 3)].has(char) === true
+            ) {
+              continue;
+            } else {
+              sudoku[r][c] = char;
+              row[r].add(char);
+              col[c].add(char);
+              grid[Math.floor(r / 3)][Math.floor(c / 3)].add(char);
+              if (backtrack(r, c + 1) === true) {
+                return true;
+              }
+              row[r].delete(char);
+              col[c].delete(char);
+              grid[Math.floor(r / 3)][Math.floor(c / 3)].delete(char);
+              sudoku[r][c] = 0;
+            }
+          }
+        }
+
+        return false;
+      }
+
+      function solveSudoku() {
+        // Implement Sudoku solving algorithm
+
+        // iterate through board and populate hash table
+        for (let rowIdx = 0; rowIdx < sudoku.length; rowIdx++) {
+          let row_ = sudoku[rowIdx];
+          for (let colIdx = 0; colIdx < row_.length; colIdx++) {
+            if (sudoku[rowIdx][colIdx] === 0) {
+              continue;
+            }
+            row[rowIdx].add(sudoku[rowIdx][colIdx]);
+            col[colIdx].add(sudoku[rowIdx][colIdx]);
+            grid[Math.floor(rowIdx / 3)][Math.floor(colIdx / 3)].add(
+              sudoku[rowIdx][colIdx]
+            );
+          }
+        }
+
+        // solve sudoku puzzle via backtracking
+        backtrack(0, 0);
+      }
+
+      function isSolved() {
+        /* Check if the Sudoku puzzle is solved by checking if there's any
+        duplicate in each row and any duplicate in each col, and any duplicates in each 3x3 sub-square
+        */
+        for (let i = 0; i < 9; i++) {
+          for (let j = 0; j < 9; j++) {
+            if (sudoku[i][j] === 0) {
+              return false; // Puzzle is not fully filled
+            }
+            // Check duplicate in row
+            for (let col = 0; col < 9; col++) {
+              if (col !== j && sudoku[i][j] === sudoku[i][col]) {
+                return false; // Duplicate number in row
+              }
+            }
+            // Check duplicate in column
+            for (let row = 0; row < 9; row++) {
+              if (row !== i && sudoku[i][j] === sudoku[row][j]) {
+                return false; // Duplicate number in column
+              }
+            }
+            // Check duplicates in 3x3 subgrid
+            const startRow = Math.floor(i / 3) * 3;
+            const startCol = Math.floor(j / 3) * 3;
+            for (let row = startRow; row < startRow + 3; row++) {
+              for (let col = startCol; col < startCol + 3; col++) {
+                if (
+                  (row !== i || col !== j) &&
+                  sudoku[i][j] === sudoku[row][col]
+                ) {
+                  return false; // Duplicate number in 3x3 subgrid
+                }
+              }
+            }
+          }
+        }
+        return true; // Puzzle is filled and satisfies Sudoku rules
+      }
+
+      function isInvalidBoard() {
+        /* Check if the Sudoku puzzle is solved by checking if there's any
+        duplicate in each row and any duplicate in each col, and any duplicates in each 3x3 sub-square
+        */
+        for (let i = 0; i < 9; i++) {
+          for (let j = 0; j < 9; j++) {
+            // Check duplicate in row
+            for (let col = 0; col < 9; col++) {
+              if (
+                col !== j &&
+                sudoku[i][j] === sudoku[i][col] &&
+                sudoku[i][j] !== 0 &&
+                sudoku[i][col] !== 0
+              ) {
+                return false; // Duplicate number in row
+              }
+            }
+            // Check duplicate in column
+            for (let row = 0; row < 9; row++) {
+              if (
+                row !== i &&
+                sudoku[i][j] === sudoku[row][j] &&
+                sudoku[i][j] !== 0 &&
+                sudoku[row][j] !== 0
+              ) {
+                return false; // Duplicate number in column
+              }
+            }
+            // Check duplicates in 3x3 subgrid
+            const startRow = Math.floor(i / 3) * 3;
+            const startCol = Math.floor(j / 3) * 3;
+            for (let row = startRow; row < startRow + 3; row++) {
+              for (let col = startCol; col < startCol + 3; col++) {
+                if (
+                  (row !== i || col !== j) &&
+                  sudoku[i][j] === sudoku[row][col] &&
+                  sudoku[i][j] !== 0 &&
+                  sudoku[row][col] !== 0
+                ) {
+                  return false; // Duplicate number in 3x3 subgrid
+                }
+              }
+            }
+          }
+        }
+        return true; // Puzzle is valid
+      }
+
+      function refreshPage() {
+        location.reload();
+      }
+
+      function solveAndCheck() {
+        if (isInvalidBoard() === false) {
+          alert("Sudoku puzzle is invalid");
+        } else {
+          solveSudoku();
+          displayGrid();
+          alert("Sudoku puzzle solved! Click OK to reveal board");
+        }
+      }
+
+      window.onload = () => {
+        createGrid();
+        displayGrid();
+      };
+    </script>
+  </body>
+</html>
