@@ -2,4 +2,4 @@
 
 ## Javascript widgets
 
-1. sudoku solver: https://LowCalLaugh.github.io/javascript_widgets/sudoku_solver.html
+1. <a href="https://LowCalLaugh.github.io/javascript_widgets/sudoku_solver.html">Sudoku solver</a>
