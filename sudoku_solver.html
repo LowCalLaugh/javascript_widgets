@@ -137,53 +137,6 @@
         // solve sudoku puzzle via backtracking
         backtrack(0, 0);
       }
-      /*
-      function isSolved() {
-        // Check if the Sudoku puzzle is solved by checking if there's any
-        // duplicate in each row and any duplicate in each col, and any duplicates in each 3x3 sub-square
-        for (let i = 0; i < 9; i++) {
-          for (let j = 0; j < 9; j++) {
-
-            let valid_val = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-            // Check for invalid character
-
-            if (!valid_val.includes(sudoku[i][j])) {
-              return false;
-            }
-
-            if (sudoku[i][j] === 0) {
-              return false; // Puzzle is not fully filled
-            }
-            // Check duplicate in row
-            for (let col = 0; col < 9; col++) {
-              if (col !== j && sudoku[i][j] === sudoku[i][col]) {
-                return false; // Duplicate number in row
-              }
-            }
-            // Check duplicate in column
-            for (let row = 0; row < 9; row++) {
-              if (row !== i && sudoku[i][j] === sudoku[row][j]) {
-                return false; // Duplicate number in column
-              }
-            }
-            // Check duplicates in 3x3 subgrid
-            const startRow = Math.floor(i / 3) * 3;
-            const startCol = Math.floor(j / 3) * 3;
-            for (let row = startRow; row < startRow + 3; row++) {
-              for (let col = startCol; col < startCol + 3; col++) {
-                if (
-                  (row !== i || col !== j) &&
-                  sudoku[i][j] === sudoku[row][col]
-                ) {
-                  return false; // Duplicate number in 3x3 subgrid
-                }
-              }
-            }
-          }
-        }
-        return true; // Puzzle is filled and satisfies Sudoku rules
-      }
-      */
 
       function isInvalidBoard() {
         /* Check if the Sudoku puzzle is solved by checking if there's any
@@ -237,30 +190,9 @@
         location.reload();
       }
 
-      function checkInvalid() {
-        // Step 1: Create a new Set object
-        const hashSet = new Set();
-
-        // Step 2: Add values from 0 to 9 to the set
-        for (let i = 0; i < 10; i++) {
-          hashSet.add(i);
-        }
-
-        for (let i = 0; i < 9; i++) {
-          for (let j = 0; j < 9; j++) {
-            if (!hashSet.has(sudoku[i][j])) {
-              return true;
-            }
-          }
-        }
-        return false;
-      }
-
       function solveAndCheck() {
         if (isInvalidBoard() === false) {
           alert("Sudoku puzzle is invalid");
-        } else if (checkInvalid() === true) {
-          alert("Sudoku puzzie has an invalid character in the board");
         } else {
           solveSudoku();
           displayGrid();
@@ -271,6 +203,7 @@
       window.onload = () => {
         createGrid();
         displayGrid();
+        alert("Enter values from 1-9 in grid.");
       };
     </script>
   </body>
