@@ -181,8 +181,14 @@
         /* Check if the Sudoku puzzle is solved by checking if there's any
         duplicate in each row and any duplicate in each col, and any duplicates in each 3x3 sub-square
         */
+        let valid_val = [1, 2, 3, 4, 5, 6, 7, 8, 9];
         for (let i = 0; i < 9; i++) {
           for (let j = 0; j < 9; j++) {
+            // Check for invalid character
+            
+            if (!valid_val.includes(sudoku[i][j])) {
+              return false;
+            }
             // Check duplicate in row
             for (let col = 0; col < 9; col++) {
               if (
