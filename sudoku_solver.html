@@ -28,7 +28,15 @@
   <body>
     <h1>Sudoku Solver</h1>
     <table id="sudoku-grid"></table>
-    <button onclick="solveAndCheck()">Solve & Check</button>
+    <div>
+      <button onclick="solveAndCheck()">Solve & Check</button>
+      <input
+        type="text"
+        id="solve-input"
+        maxlength="81"
+        placeholder="Enter digits 1-9 ONLY"
+      />
+    </div>
     <button onclick="refreshPage()">Clear Board</button>
 
     <script>
@@ -203,7 +211,6 @@
       window.onload = () => {
         createGrid();
         displayGrid();
-        alert("Enter values from 1-9 in grid.");
       };
     </script>
   </body>
