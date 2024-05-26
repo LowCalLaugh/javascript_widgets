@@ -137,11 +137,10 @@
         // solve sudoku puzzle via backtracking
         backtrack(0, 0);
       }
-
+      /*
       function isSolved() {
-        /* Check if the Sudoku puzzle is solved by checking if there's any
-        duplicate in each row and any duplicate in each col, and any duplicates in each 3x3 sub-square
-        */
+        // Check if the Sudoku puzzle is solved by checking if there's any
+        // duplicate in each row and any duplicate in each col, and any duplicates in each 3x3 sub-square
         for (let i = 0; i < 9; i++) {
           for (let j = 0; j < 9; j++) {
 
@@ -184,6 +183,7 @@
         }
         return true; // Puzzle is filled and satisfies Sudoku rules
       }
+      */
 
       function isInvalidBoard() {
         /* Check if the Sudoku puzzle is solved by checking if there's any
@@ -237,10 +237,24 @@
         location.reload();
       }
 
+      function checkInvalid() {
+        let valid_num = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+        for (int i = 0; i < 9; i++) {
+          for (int j = 0; j < 9; j++) {
+            if (!valid_num.includes(sudoku[i][j])) {
+              return false;
+            }
+        return true;
+      }
+
       function solveAndCheck() {
         if (isInvalidBoard() === false) {
           alert("Sudoku puzzle is invalid");
-        } else {
+        }
+        else if (checkInvalid() === true) {
+          alert("Sudoku puzzie has an invalid character in the board")
+        }
+        else {
           solveSudoku();
           displayGrid();
           alert("Sudoku puzzle solved! Click OK to reveal board");
